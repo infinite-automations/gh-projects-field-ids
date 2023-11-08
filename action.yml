@@ -1,0 +1,52 @@
+name: "GitHub Projects Get Field Ids"
+description: "Get the id of a custom field or a select list option"
+branding:
+  icon: search
+  color: orange
+
+inputs:
+  token:
+    description: "Token to access the project via API"
+    required: true
+  project-number:
+    description: "Number of the project"
+    required: true
+  project-owner:
+    description: "The owner of the project. This is normally an organization."
+    required: true
+  field-name:
+    description: "The name of the field to get the id for."
+    required: false
+  select-option-name:
+    description: "The name of the select option to get the id for. field-name has to be specified as well."
+    required: false
+
+outputs:
+  field-id:
+    description: "The id for the given field"
+    value: ${{ steps.get-field-id.outputs.id }}
+  select-option-id:
+    description: "The id for the given select option"
+    value: ${{ steps.get-select-option-id.outputs.id }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get field id
+      id: get-field-id
+      if: ${{ inputs.field-name }}
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+      run: |
+        field_id=$(gh project field-list ${{ inputs.project-number }} --owner "${{ inputs.project-owner }}" --format json | jq -r --arg fieldName "${{ inputs.field-name }}" '.fields[] | select(.name==$fieldName) .id')
+        echo "id=$field_id" >> "$GITHUB_OUTPUT"
+    - name: Get select option id
+      id: get-select-option-id
+      if: ${{ inputs.select-option-name }}
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+      run: |
+        field_id=$(gh project field-list ${{ inputs.project-number }} --owner "${{ inputs.project-owner }}" --format json | jq -r --arg fieldName "${{ inputs.field-name }}" --arg selectOptionName "${{ inputs.select-option-name }}" '.fields[] | select(.name==$fieldName) .options[] | select(.name==$selectOptionName) .id')
+        echo "id=$field_id" >> "$GITHUB_OUTPUT"
