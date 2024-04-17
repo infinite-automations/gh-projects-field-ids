@@ -8,6 +8,8 @@ env:
   FIELD_ID: PVTF_lADOCOJGKs4AX9CyzgPUCoI
   SELECT_FIELD_ID: PVTSSF_lADOCOJGKs4AX9CyzgPUCro
   SELECT_OPTION_ID: 4b83566e
+  SELECT_COMPLEX_FIELD_ID: PVTSSF_lADOCOJGKs4AX9CyzgVbXGE
+  SELECT_COMPLEX_OPTION_ID: 0a479792
 
 jobs:
   test:
@@ -46,3 +48,13 @@ jobs:
           expected: ${{ env.SELECT_OPTION_ID }}
           actual: ${{ steps.get-select-option-id.outputs.select-option-id }}
           comparison: exact
+      - name: Get Complex select option id
+        id: get-complex-select-option-id
+        uses: ./
+        with:
+          token: ${{ secrets.PROJECT_TOKEN }}
+          project-number: 1
+          project-owner: infinite-automations
+          field-name: Test complex select field
+          select-option-name: Complex Option 1
+        
