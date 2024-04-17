@@ -61,6 +61,6 @@ jobs:
         uses: nick-fields/assert-action@v1
         with:
           expected: ${{ env.SELECT_COMPLEX_OPTION_ID }}
-          actual: ${{ steps.get-select-option-id.outputs.select-option-id }}
+          actual: ${{ steps.get-complex-select-option-id.outputs.select-option-id }}
           comparison: exact
         
