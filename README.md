@@ -13,6 +13,9 @@ Gets the id of a github project custom field or a select option.
     token: ''
     # number of the project. Value is integer and can be found in the url of the project view. Example url: https://github.com/orgs/infinite-automations/projects/1/settings
     project-number: ''
+    # owner of the project
+    # Normally a organization
+    project-owner: ''
     # Name of the field to get the id from.
     # Camel Case is important!
     field-name: ''
