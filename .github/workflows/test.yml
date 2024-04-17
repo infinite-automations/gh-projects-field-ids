@@ -57,4 +57,10 @@ jobs:
           project-owner: infinite-automations
           field-name: Test complex select field
           select-option-name: Complex Option 1
+      - name: Test Get complex select option id
+        uses: nick-fields/assert-action@v1
+        with:
+          expected: ${{ env.SELECT_COMPLEX_OPTION_ID }}
+          actual: ${{ steps.get-select-option-id.outputs.select-option-id }}
+          comparison: exact
         
