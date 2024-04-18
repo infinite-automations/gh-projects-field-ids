@@ -1,4 +1,4 @@
-# gh-projects-field-ids v1
+# gh-projects-field-ids
 
 ![workflow badge](https://github.com/infinite-automations/gh-projects-field-ids/actions/workflows/test.yml/badge.svg)
 
@@ -23,6 +23,15 @@ Gets the id of a github project custom field or a select option.
     # Camel Case is important!
     select-option-name: ''
 ```
+# Inputs
+
+| Key | Description | Type | Required |
+| --- | ----------- | ---- | -------- |
+| token | Token to access the project via API | String | Yes |
+| project-number | Number of the project | Integer | Yes |
+| project-owner | The owner of the project. This is normally an organization. | String | Yes |
+| field-name | The name of the select field. | String | Yes |
+| select-option-name | The Name for the option of the select field. It has to be an existing value. | String | Yes |
 
 # Outputs
 
