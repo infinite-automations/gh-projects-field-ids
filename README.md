@@ -7,7 +7,7 @@ Gets the id of a github project custom field or a select option.
 # Usage
 
 ```yaml
-- uses: infinite-automations/gh-projects-field-ids@v1
+- uses: infinite-automations/gh-projects-field-ids@v1.0.0
   with:
     # token which is used to access the project data via GitHub CLI
     token: ''
