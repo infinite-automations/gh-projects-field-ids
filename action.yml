@@ -33,20 +33,40 @@ runs:
   using: "composite"
   steps:
     - name: Get field id
-      id: get-field-id
+      id: get-ids
       if: ${{ inputs.field-name }}
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.token }}
       run: |
-        field_id=$(gh project field-list ${{ inputs.project-number }} --owner "${{ inputs.project-owner }}" --format json | jq -r --arg fieldName "${{ inputs.field-name }}" '.fields[] | select(.name==$fieldName) .id')
-        echo "id=$field_id" >> "$GITHUB_OUTPUT"
+        JSON=$(\
+          gh project field-list ${{ inputs.project-number }} \
+          --owner "${{ inputs.project-owner }}" \
+          --format json \
+        )
+        echo json="$JSON" >> "$GITHUB_OUTPUT"
+    - name: Get field id
+      id: get-field-id
+      if: ${{ inputs.field-name }}
+      shell: bash
+      run: |
+        FIELD_ID=$(\
+          echo '${{ steps.get-ids.outputs.json }}' \
+          | jq -r \
+            --arg fieldName "${{ inputs.field-name }}" \
+            '.fields[] | select(.name==$fieldName) .id' \
+        )
+        echo "id=$FIELD_ID" >> "$GITHUB_OUTPUT"
     - name: Get select option id
       id: get-select-option-id
       if: ${{ inputs.select-option-name }}
       shell: bash
-      env:
-        GH_TOKEN: ${{ inputs.token }}
       run: |
-        field_id=$(gh project field-list ${{ inputs.project-number }} --owner "${{ inputs.project-owner }}" --format json | jq -r --arg fieldName "${{ inputs.field-name }}" --arg selectOptionName "${{ inputs.select-option-name }}" '.fields[] | select(.name==$fieldName) .options[] | select(.name==$selectOptionName) .id')
-        echo "id=$field_id" >> "$GITHUB_OUTPUT"
+        SELECTION_OPTION_ID=$(\
+          echo '${{ steps.get-ids.outputs.json }}' \
+          | jq -r \
+            --arg fieldName "${{ inputs.field-name }}" \
+            --arg selectOptionName "${{ inputs.select-option-name }}" \
+            '.fields[] | select(.name==$fieldName) .options[] | select(.name==$selectOptionName) .id' \
+        )
+        echo "id=$SELECTION_OPTION_ID" >> "$GITHUB_OUTPUT"
