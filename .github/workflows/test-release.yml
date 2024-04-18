@@ -1,0 +1,92 @@
+name: Test & Release
+
+on:
+  workflow_dispatch:
+  push:
+
+# env:
+#   FIELD_ID: PVTF_lADOCOJGKs4AX9CyzgPUCoI
+#   SELECT_FIELD_ID: PVTSSF_lADOCOJGKs4AX9CyzgPUCro
+#   SELECT_OPTION_ID: 4b83566e
+#   SELECT_COMPLEX_FIELD_ID: PVTSSF_lADOCOJGKs4AX9CyzgVbXGE
+#   SELECT_COMPLEX_OPTION_ID: 0a479792
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - test-name: "Get field id"
+            field-name: "Test Field"
+            selection-option-name: ""
+            expected-field-id: PVTF_lADOCOJGKs4AX9CyzgPUCoI
+            expected-secection-option-id: ""
+          - test-name: "Get select option id"
+            field-name: "Test select field"
+            selection-option-name: "Option1"
+            expected-field-id: PVTSSF_lADOCOJGKs4AX9CyzgPUCro
+            expected-secection-option-id: 4b83566e
+          - test-name: "Get Complex select option id"
+            field-name: "Test complex select field"
+            selection-option-name: "Complex Option 1"
+            expected-field-id: PVTSSF_lADOCOJGKs4AX9CyzgVbXGE
+            expected-secection-option-id: 0a479792
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          show-progress: false
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.TESTING_APP_ID }}
+          private-key: ${{ secrets.TESTING_APP_KEY }}
+      - name: Exec
+        id: get-field-id
+        uses: ./
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          project-number: 1
+          project-owner: infinite-automations
+          field-name: ${{ matrix.field-name }}
+          select-option-name: ${{ matrix.selection-option-name }}
+      - name: Test field ID
+        uses: nick-fields/assert-action@v2
+        with:
+          expected: ${{ matrix.expected-field-id }}
+          actual: ${{ steps.get-field-id.outputs.field-id }}
+          comparison: exact
+      - name: Test select option ID
+        uses: nick-fields/assert-action@v2
+        with:
+          expected: ${{ matrix.expected-secection-option-id }}
+          actual: ${{ steps.get-field-id.outputs.select-option-id }}
+          comparison: exact
+
+  release:
+    name: Release
+    needs:
+      - test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Semantic Release Plugins
+        run: |
+          npm install semantic-release-replace-plugin -D
+          npm install --save-dev semantic-release-major-tag
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v4
+        with:
+          dry_run: ${{ github.event_name == 'pull_request' }}
+          ci: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
