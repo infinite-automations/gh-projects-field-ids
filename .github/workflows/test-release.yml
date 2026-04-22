@@ -59,13 +59,13 @@ jobs:
           field-name: ${{ matrix.field-name }}
           select-option-name: ${{ matrix.selection-option-name }}
       - name: Test field ID
-        uses: nick-fields/assert-action@aa0067e01f0f6545c31755d6ca128c5a3a14f6bf # v2
+        uses: nick-fields/assert-action@22dd2a66ef733fe92022d3704183ac007463eecb # v3.0.0
         with:
           expected: ${{ matrix.expected-field-id }}
           actual: ${{ steps.get-field-id.outputs.field-id }}
           comparison: exact
       - name: Test select option ID
-        uses: nick-fields/assert-action@aa0067e01f0f6545c31755d6ca128c5a3a14f6bf # v2
+        uses: nick-fields/assert-action@22dd2a66ef733fe92022d3704183ac007463eecb # v3.0.0
         with:
           expected: ${{ matrix.expected-secection-option-id }}
           actual: ${{ steps.get-field-id.outputs.select-option-id }}
